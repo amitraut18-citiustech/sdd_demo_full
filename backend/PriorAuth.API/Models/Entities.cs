@@ -251,6 +251,7 @@ public class Authorization
     public DiagnosisCode? PrimaryDiagnosisCode { get; set; }
     public List<AuthorizationProcedure> Procedures { get; set; } = new();
     public List<AuthorizationDiagnosis> Diagnoses { get; set; } = new();
+    public List<AuthorizationStatusHistory> StatusHistory { get; set; } = new();
 }
 
 [Table("authorization_procedures")]
@@ -287,4 +288,25 @@ public class AuthorizationDiagnosis
     public bool IsPrimary { get; set; } = false;
 
     public DiagnosisCode? Diagnosis { get; set; }
+}
+
+[Table("authorization_status_history")]
+public class AuthorizationStatusHistory
+{
+    [Key, Column("id")]
+    public int Id { get; set; }
+
+    [Column("authorization_id")]
+    public int AuthorizationId { get; set; }
+
+    [Column("previous_status")]
+    public string PreviousStatus { get; set; } = string.Empty;
+
+    [Column("new_status")]
+    public string NewStatus { get; set; } = string.Empty;
+
+    [Column("changed_at")]
+    public DateTime ChangedAt { get; set; } = DateTime.UtcNow;
+
+    public Authorization? Authorization { get; set; }
 }
