@@ -1,0 +1,188 @@
+{
+  ".claude/settings.local.json": {
+    "mtime": 1788769749.6012528,
+    "seen": 1788769756.5585673,
+    "ast_hash": "2286ff12ed94e78325e97b8ad8a796bf",
+    "semantic_hash": ""
+  },
+  ".mcp.json": {
+    "mtime": 1788261770.2615602,
+    "seen": 1788769756.5585673,
+    "ast_hash": "4acd1fc4aec7916604d7e59841de28ab",
+    "semantic_hash": ""
+  },
+  "backend/PriorAuth.API/Controllers/AuthorizationsController.cs": {
+    "mtime": 1788255793.3012812,
+    "seen": 1788769756.5585673,
+    "ast_hash": "e3b3909a29a85477fe4cd8532f9928f3",
+    "semantic_hash": ""
+  },
+  "backend/PriorAuth.API/Controllers/LookupControllers.cs": {
+    "mtime": 1788422526.9703631,
+    "seen": 1788769756.5585673,
+    "ast_hash": "b553d19a4ab9f3840f9765a0242ed494",
+    "semantic_hash": ""
+  },
+  "backend/PriorAuth.API/DTOs/Dtos.cs": {
+    "mtime": 1788421048.0076644,
+    "seen": 1788769756.5585673,
+    "ast_hash": "30305f5d5992b76423bd6561e420cd65",
+    "semantic_hash": ""
+  },
+  "backend/PriorAuth.API/Data/PriorAuthDbContext.cs": {
+    "mtime": 1788255793.305318,
+    "seen": 1788769756.5585673,
+    "ast_hash": "80625c637063ff078b74eb3605558b23",
+    "semantic_hash": ""
+  },
+  "backend/PriorAuth.API/Models/Entities.cs": {
+    "mtime": 1788255793.305318,
+    "seen": 1788769756.5585673,
+    "ast_hash": "ca24e0620522afac237cbca1721f3906",
+    "semantic_hash": ""
+  },
+  "backend/PriorAuth.API/PriorAuth.API.csproj": {
+    "mtime": 1788255793.3081076,
+    "seen": 1788769756.5585673,
+    "ast_hash": "72549c31908bea82ba0196a76c58e8f9",
+    "semantic_hash": ""
+  },
+  "backend/PriorAuth.API/Program.cs": {
+    "mtime": 1788255793.310127,
+    "seen": 1788769756.5585673,
+    "ast_hash": "420723d789f71a2fc969ad6c55a3e2a8",
+    "semantic_hash": ""
+  },
+  "backend/PriorAuth.API/appsettings.json": {
+    "mtime": 1788257399.5960245,
+    "seen": 1788769756.5585673,
+    "ast_hash": "c12a40245263bf4ff246fd80f68a7056",
+    "semantic_hash": ""
+  },
+  "frontend/package.json": {
+    "mtime": 1788255793.3246944,
+    "seen": 1788769756.5585673,
+    "ast_hash": "171254f841f6a075f1689a135ae71988",
+    "semantic_hash": ""
+  },
+  "frontend/src/App.tsx": {
+    "mtime": 1788255793.328732,
+    "seen": 1788769756.5585673,
+    "ast_hash": "f18aefacdd17c0ad813f81b890427ed3",
+    "semantic_hash": ""
+  },
+  "frontend/src/api/client.ts": {
+    "mtime": 1788255793.330751,
+    "seen": 1788769756.5585673,
+    "ast_hash": "af782df7319a2b5c29c4440df63ca040",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/SearchSelect.tsx": {
+    "mtime": 1788255793.330751,
+    "seen": 1788769756.5585673,
+    "ast_hash": "95d9fbb47af6b111f3e59410a1ebca3c",
+    "semantic_hash": ""
+  },
+  "frontend/src/main.tsx": {
+    "mtime": 1788255793.33284,
+    "seen": 1788769756.5585673,
+    "ast_hash": "2f5c7cd43536a3c2aedc2d20d0b8f0c6",
+    "semantic_hash": ""
+  },
+  "frontend/src/pages/AuthorizationDetailPage.tsx": {
+    "mtime": 1788255793.3374188,
+    "seen": 1788769756.5585673,
+    "ast_hash": "e8acdaff3c9eaff16472eff1e9d71126",
+    "semantic_hash": ""
+  },
+  "frontend/src/pages/DashboardPage.tsx": {
+    "mtime": 1788255793.3394406,
+    "seen": 1788769756.5585673,
+    "ast_hash": "081de29f53ebd77ee43a4a0b54e4d2ec",
+    "semantic_hash": ""
+  },
+  "frontend/src/pages/NewAuthorizationPage.tsx": {
+    "mtime": 1788255793.343485,
+    "seen": 1788769756.5585673,
+    "ast_hash": "8fc762a7339285b95fff5689433fc706",
+    "semantic_hash": ""
+  },
+  "frontend/src/types/index.ts": {
+    "mtime": 1788255793.343485,
+    "seen": 1788769756.5585673,
+    "ast_hash": "ad9ca81982b65bff4efa7d79b9c92346",
+    "semantic_hash": ""
+  },
+  "frontend/tsconfig.json": {
+    "mtime": 1788255793.3456004,
+    "seen": 1788769756.5585673,
+    "ast_hash": "c47bdf73d8b4f80d6ad18eca3e1c0bc2",
+    "semantic_hash": ""
+  },
+  "frontend/vite.config.ts": {
+    "mtime": 1788255793.3486545,
+    "seen": 1788769756.5585673,
+    "ast_hash": "e4521571b5d6ef6e189cc6ba98d15c00",
+    "semantic_hash": ""
+  },
+  ".claude/agents/fixer.md": {
+    "mtime": 1788421771.0888388,
+    "seen": 1788769756.5585673,
+    "ast_hash": "40470c8838542270d30574c4dc307183",
+    "semantic_hash": ""
+  },
+  ".claude/agents/investigator.md": {
+    "mtime": 1788421728.1495073,
+    "seen": 1788769756.5585673,
+    "ast_hash": "4b9c90d0cb61d1d16862357bcff51c49",
+    "semantic_hash": ""
+  },
+  ".claude/agents/ui-reviewer.md": {
+    "mtime": 1788419271.0521305,
+    "seen": 1788769756.5585673,
+    "ast_hash": "0994e1dde709b52a4eb7cf1d12a02c6a",
+    "semantic_hash": ""
+  },
+  ".claude/agents/verifier.md": {
+    "mtime": 1788421808.9332633,
+    "seen": 1788769756.5585673,
+    "ast_hash": "0093bb14ba6ad5f6babd24c2839e466b",
+    "semantic_hash": ""
+  },
+  ".claude/commands/fixbug.md": {
+    "mtime": 1788422085.1325116,
+    "seen": 1788769756.5585673,
+    "ast_hash": "04adb412fbb841e31308d25cc4abdbb7",
+    "semantic_hash": ""
+  },
+  ".claude/skills/form-review/SKILL.md": {
+    "mtime": 1788424157.4508731,
+    "seen": 1788769756.5585673,
+    "ast_hash": "5cdefe7cf0d7c60536d020a8b534e0b0",
+    "semantic_hash": ""
+  },
+  "CLAUDE.md": {
+    "mtime": 1788259930.791523,
+    "seen": 1788769756.5585673,
+    "ast_hash": "783d5c84b0f21b082ea7a11becafd89b",
+    "semantic_hash": ""
+  },
+  "README.md": {
+    "mtime": 1788255793.297101,
+    "seen": 1788769756.5585673,
+    "ast_hash": "2cc1078175940183aad1418b27a0ea1a",
+    "semantic_hash": ""
+  },
+  "docker-compose.yml": {
+    "mtime": 1788255793.313172,
+    "seen": 1788769756.5585673,
+    "ast_hash": "fd4490b93e2711833c3d5a0220f97441",
+    "semantic_hash": ""
+  },
+  "frontend/index.html": {
+    "mtime": 1788255793.3193376,
+    "seen": 1788769756.5585673,
+    "ast_hash": "bc58773c5e0ebf60dc032903a8d0c073",
+    "semantic_hash": ""
+  }
+}
