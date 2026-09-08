@@ -9,12 +9,13 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [statusFilter, setStatusFilter] = useState('')
+  const [page, setPage] = useState(1)
   const navigate = useNavigate()
 
   const load = async () => {
     setLoading(true); setError(null)
     try {
-      const data = await api.authorizations.getAll(statusFilter || undefined)
+      const data = await api.authorizations.getAll(statusFilter || undefined, page, 20)
       setAuthorizations(data)
     } catch {
       setError('Failed to load authorizations. Is the API running?')
@@ -23,7 +24,7 @@ export default function DashboardPage() {
     }
   }
 
-  useEffect(() => { load() }, [statusFilter])
+  useEffect(() => { load() }, [statusFilter, page])
 
   const statuses = ['', 'PENDING', 'IN_REVIEW', 'APPROVED', 'DENIED', 'CANCELLED']
 
@@ -41,15 +42,13 @@ export default function DashboardPage() {
 
       <div className="card">
         <div className="card-header">
-          <span className="card-title">
-            All Requests {authorizations.length > 0 && `(${authorizations.length})`}
-          </span>
+          <span className="card-title">All Requests</span>
           <div className="flex gap-2">
             <select
               className="form-select"
               style={{ width: 160 }}
               value={statusFilter}
-              onChange={e => setStatusFilter(e.target.value)}
+              onChange={e => { setStatusFilter(e.target.value); setPage(1) }}
             >
               {statuses.map(s => (
                 <option key={s} value={s}>{s || 'All Statuses'}</option>
@@ -125,6 +124,25 @@ export default function DashboardPage() {
                 ))}
               </tbody>
             </table>
+          </div>
+        )}
+        {!loading && (authorizations.length > 0 || page > 1) && (
+          <div className="flex items-center justify-between mt-4">
+            <button
+              className="btn btn-secondary btn-sm"
+              disabled={page === 1}
+              onClick={() => setPage(p => p - 1)}
+            >
+              ← Previous
+            </button>
+            <span className="text-muted text-sm">Page {page}</span>
+            <button
+              className="btn btn-secondary btn-sm"
+              disabled={authorizations.length < 20}
+              onClick={() => setPage(p => p + 1)}
+            >
+              Next →
+            </button>
           </div>
         )}
       </div>

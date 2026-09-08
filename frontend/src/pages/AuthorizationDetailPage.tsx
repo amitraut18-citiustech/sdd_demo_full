@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { api } from '../api/client'
-import type { AuthorizationDetail } from '../types'
+import type { AuthorizationDetail, StatusHistoryEntry } from '../types'
 import { STATUS_COLORS, STATUS_BG } from '../types'
 
 export default function AuthorizationDetailPage() {
@@ -11,6 +11,7 @@ export default function AuthorizationDetailPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [updatingStatus, setUpdatingStatus] = useState(false)
+  const [history, setHistory] = useState<StatusHistoryEntry[]>([])
 
   useEffect(() => {
     if (!id) return
@@ -20,14 +21,29 @@ export default function AuthorizationDetailPage() {
       .finally(() => setLoading(false))
   }, [id])
 
+  const loadHistory = async () => {
+    if (!id) return
+    try {
+      const data = await api.authorizations.getHistory(Number(id))
+      setHistory(data)
+    } catch {
+      // non-fatal — history panel just stays empty
+    }
+  }
+
+  useEffect(() => { loadHistory() }, [id])
+
   const handleStatusChange = async (newStatus: string) => {
     if (!auth) return
     setUpdatingStatus(true)
     try {
       await api.authorizations.updateStatus(auth.authorizationId, newStatus)
       setAuth({ ...auth, status: newStatus })
-    } catch {
-      alert('Failed to update status')
+      loadHistory()
+    } catch (err) {
+      const message = err instanceof Error ? err.message : ''
+      const match = message.match(/^API error 400: (.+)$/)
+      alert(match ? match[1] : 'Failed to update status')
     } finally {
       setUpdatingStatus(false)
     }
@@ -256,6 +272,44 @@ export default function AuthorizationDetailPage() {
                 <p style={{ fontSize: 13, color: '#374151' }}>{auth.notes}</p>
               </div>
             </>
+          )}
+        </div>
+      </div>
+
+      <div className="card mt-4">
+        <div className="card-header">
+          <span className="card-title">Status History</span>
+        </div>
+        <div className="card-body">
+          {history.length === 0 ? (
+            <p className="text-muted">No status changes recorded yet.</p>
+          ) : (
+            <table>
+              <thead>
+                <tr>
+                  <th>Changed At</th>
+                  <th>From</th>
+                  <th>To</th>
+                </tr>
+              </thead>
+              <tbody>
+                {history.map(h => (
+                  <tr key={h.id}>
+                    <td>{new Date(h.changedAt).toLocaleString()}</td>
+                    <td>
+                      <span className="badge" style={{ color: STATUS_COLORS[h.previousStatus] ?? '#374151', background: STATUS_BG[h.previousStatus] ?? '#f3f4f6', fontSize: 12, padding: '4px 12px' }}>
+                        {h.previousStatus}
+                      </span>
+                    </td>
+                    <td>
+                      <span className="badge" style={{ color: STATUS_COLORS[h.newStatus] ?? '#374151', background: STATUS_BG[h.newStatus] ?? '#f3f4f6', fontSize: 12, padding: '4px 12px' }}>
+                        {h.newStatus}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           )}
         </div>
       </div>
