@@ -138,21 +138,61 @@ public class AuthorizationsController : ControllerBase
             new { id = auth.AuthorizationId }, MapToDetail(created));
     }
 
+    private static readonly Dictionary<string, string[]> AllowedTransitions = new()
+    {
+        ["PENDING"] = new[] { "IN_REVIEW", "APPROVED", "DENIED", "CANCELLED" },
+        ["IN_REVIEW"] = new[] { "APPROVED", "DENIED", "CANCELLED" },
+        ["APPROVED"] = new[] { "CANCELLED" },
+        ["DENIED"] = Array.Empty<string>(),
+        ["CANCELLED"] = Array.Empty<string>(),
+    };
+
     [HttpPatch("{id:int}/status")]
     public async Task<IActionResult> UpdateStatus(int id, [FromBody] UpdateStatusRequest request)
     {
         var auth = await _db.Authorizations.FindAsync(id);
         if (auth == null) return NotFound();
 
-        var validStatuses = new[] { "PENDING", "APPROVED", "DENIED", "CANCELLED", "IN_REVIEW" };
-        if (!validStatuses.Contains(request.Status.ToUpper()))
-            return BadRequest($"Invalid status. Must be one of: {string.Join(", ", validStatuses)}");
+        var newStatus = request.Status.ToUpper();
+        if (!AllowedTransitions.ContainsKey(newStatus))
+            return BadRequest($"Invalid status. Must be one of: {string.Join(", ", AllowedTransitions.Keys)}");
 
-        auth.Status = request.Status.ToUpper();
+        var previousStatus = auth.Status;
+        if (previousStatus == newStatus)
+            return BadRequest($"Authorization is already in status {previousStatus}.");
+
+        if (!AllowedTransitions.TryGetValue(previousStatus, out var allowed) || !allowed.Contains(newStatus))
+            return BadRequest($"Cannot transition from {previousStatus} to {newStatus}.");
+
+        auth.Status = newStatus;
         auth.UpdatedAt = DateTime.UtcNow;
+
+        _db.AuthorizationStatusHistory.Add(new AuthorizationStatusHistory
+        {
+            AuthorizationId = id,
+            PreviousStatus = previousStatus,
+            NewStatus = newStatus,
+            ChangedAt = DateTime.UtcNow
+        });
+
         await _db.SaveChangesAsync();
 
         return NoContent();
+    }
+
+    [HttpGet("{id:int}/history")]
+    public async Task<ActionResult<List<StatusHistoryDto>>> GetHistory(int id)
+    {
+        var exists = await _db.Authorizations.AnyAsync(a => a.AuthorizationId == id);
+        if (!exists) return NotFound();
+
+        var history = await _db.AuthorizationStatusHistory
+            .Where(h => h.AuthorizationId == id)
+            .OrderBy(h => h.ChangedAt)
+            .Select(h => new StatusHistoryDto(h.Id, h.PreviousStatus, h.NewStatus, h.ChangedAt))
+            .ToListAsync();
+
+        return Ok(history);
     }
 
     private static AuthorizationDetailDto MapToDetail(Authorization a)
