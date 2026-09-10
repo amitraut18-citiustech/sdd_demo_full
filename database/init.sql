@@ -131,6 +131,14 @@ CREATE TABLE authorization_status_history (
     changed_at          TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
+CREATE TABLE eligibility_records (
+    id                  SERIAL PRIMARY KEY,
+    correlation_id      UUID NOT NULL,
+    status              VARCHAR(20) NOT NULL,
+    checked_at          TIMESTAMP NOT NULL DEFAULT NOW(),
+    data_source         VARCHAR(20) NOT NULL DEFAULT 'LOCAL_DB'
+);
+
 -- Reference number generator
 CREATE SEQUENCE auth_ref_seq START 100001;
 
@@ -188,7 +196,8 @@ INSERT INTO members VALUES
 ('PT001236', 'Robert', 'Johnson',  '1978-11-08', 'M', 'EN', '789 Pine Road',   NULL,        'Sacramento',  'CA', '94203', '916-555-0103', 'robert.j@email.com',    'MBR10003', 'GRP002', 'IPA02', 'UHC'),
 ('PT001237', 'Mary',   'Williams', '1992-05-30', 'F', 'ES', '321 Elm Street',  'Unit 5',    'Fresno',      'CA', '93722', '559-555-0104', 'mary.w@email.com',      'MBR10004', 'GRP002', 'IPA02', 'BSCA'),
 ('PT001238', 'David',  'Brown',    '1965-09-12', 'M', 'EN', '654 Maple Drive', NULL,        'Oakland',     'CA', '94612', '510-555-0105', 'david.b@email.com',     'MBR10005', 'GRP003', 'IPA03', 'ANTHEM'),
-('PT001239', 'Susan',  'Davis',    '1958-01-25', 'F', 'EN', '987 Cedar Lane',  NULL,        'San Jose',    'CA', '95128', '408-555-0106', 'susan.d@email.com',     'MBR10006', 'GRP003', 'IPA03', 'MOLINA');
+('PT001239', 'Susan',  'Davis',    '1958-01-25', 'F', 'EN', '987 Cedar Lane',  NULL,        'San Jose',    'CA', '95128', '408-555-0106', 'susan.d@email.com',     'MBR10006', 'GRP003', 'IPA03', 'MOLINA'),
+('PT001240', 'Test',   'NullPlan', '1990-01-01', 'M', 'EN', NULL,              NULL,        'Los Angeles', 'CA', '90001', NULL,           NULL,                    'MBR10007', 'GRP001', 'IPA01', NULL);
 
 INSERT INTO providers VALUES
 ('PHY001', 'Michael', 'Anderson', '1234567890', '12-3456789', 'Orthopedic Surgery', 'Sports Medicine',  '100 Medical Plaza',   NULL,       'Los Angeles', 'CA', '90024', '310-555-2001', '310-555-2002', 'dr.anderson@clinic.com', '310-555-2003'),

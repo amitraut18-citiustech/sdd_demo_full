@@ -17,6 +17,7 @@ public class PriorAuthDbContext : DbContext
     public DbSet<AuthorizationProcedure> AuthorizationProcedures => Set<AuthorizationProcedure>();
     public DbSet<AuthorizationDiagnosis> AuthorizationDiagnoses => Set<AuthorizationDiagnosis>();
     public DbSet<AuthorizationStatusHistory> AuthorizationStatusHistory => Set<AuthorizationStatusHistory>();
+    public DbSet<EligibilityRecord> EligibilityRecords => Set<EligibilityRecord>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -310,3 +310,22 @@ public class AuthorizationStatusHistory
 
     public Authorization? Authorization { get; set; }
 }
+
+[Table("eligibility_records")]
+public class EligibilityRecord
+{
+    [Key, Column("id")]
+    public int Id { get; set; }
+
+    [Column("correlation_id")]
+    public Guid CorrelationId { get; set; }
+
+    [Column("status")]
+    public string Status { get; set; } = string.Empty;
+
+    [Column("checked_at")]
+    public DateTime CheckedAt { get; set; } = DateTime.UtcNow;
+
+    [Column("data_source")]
+    public string DataSource { get; set; } = "LOCAL_DB";
+}

@@ -117,3 +117,19 @@ public record StatusHistoryDto(
     string NewStatus,
     DateTime ChangedAt
 );
+
+// ─── ELIGIBILITY DTOs ───────────────────────────────────────────
+
+public record EligibilityCheckRequest(
+    string PatientId,
+    int HealthPlanId,
+    string? CorrelationId
+);
+
+public record EligibilityCheckResponse(
+    string Status,
+    string CorrelationId,
+    DateTime CheckedAt,
+    string? ErrorCode,
+    string? ErrorMessage
+);

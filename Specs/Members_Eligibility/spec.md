@@ -44,7 +44,7 @@ FR-04: The system shall classify the result as `ERROR` when the member cannot be
 
 FR-05: The system shall treat the eligibility result as advisory only — the agent must be able to continue the PA wizard regardless of the returned status.
 
-FR-06: The system shall persist exactly one audit record per eligibility check, containing a correlation ID, the identifiers checked, the resulting status, and a timestamp — and no PHI fields.
+FR-06: The system shall persist exactly one audit record per eligibility check, containing a correlation ID, the resulting status, a timestamp, and a data-source marker — and no `patientId`, `healthPlanId`, or PHI fields of any kind (see OQ-10).
 
 FR-07: The system shall generate a correlation ID using `Guid.NewGuid()` when the caller does not supply one.
 
@@ -85,7 +85,7 @@ FR-08: The system shall use only data already present in the local database (Mem
 | AC-05 | Valid `patientId` and unknown `healthPlanId` (e.g. `999`) | `POST /api/eligibility/check` is called | Response is HTTP 200 with `status=ERROR`, `errorCode=PLN-001` | Swagger |
 | AC-06 | Any valid eligibility check request against the local database | The endpoint is called | Total response time is under 500ms | Automated test with elapsed-time assertion |
 | AC-07 | Agent is on PA wizard step 4 and has selected a member and health plan | The eligibility result (any status) is returned | The wizard's "Next" action to step 5 remains enabled — the result never gates `canProceed()` | Manual QA / component test |
-| AC-08 | Any eligibility check | Is executed | Exactly one audit record is written containing correlationId, patientId, healthPlanId, status, and timestamp — `patientId`/`healthPlanId` are bare identifiers, not treated as PHI for this audit table (see OQ-10); no other PHI field (name, DOB, address, phone, email, etc.) appears | Audit record inspection |
+| AC-08 | Any eligibility check | Is executed | Exactly one audit record is written containing exactly `correlationId`, `status`, `checkedAt`, and `dataSource` — no `patientId`, `healthPlanId`, or any PHI field (name, DOB, address, phone, email, etc.) appears (see OQ-10) | Audit record inspection |
 | AC-09 | Any generated code for this feature | Is scanned | No PHI field names (CLAUDE.md §4.1) appear in any `ILogger` call | `/hipaa-check` → COMPLIANT |
 | AC-10 | All code changes for this feature | `dotnet build` is run | Zero errors, zero warnings | Build output |
 | AC-11 | Unknown `patientId` (e.g. `PT999999`) AND unknown `healthPlanId` (e.g. `999`) | `POST /api/eligibility/check` is called | Response is HTTP 200 with `status=ERROR`, `errorCode=MBR-001` (member-missing takes precedence per FR-04) | Swagger |
@@ -143,8 +143,8 @@ Route follows the existing `/api/[controller]` convention (CLAUDE.md §6).
 | Category | Requirement |
 |----------|-------------|
 | Performance | Response time under 500ms for the local database lookup (intent.md Success Criteria #2) |
-| Security | No PHI in `ILogger` calls or error messages (CLAUDE.md §4.1). The audit record (a DB table, not a log) may contain `patientId` and `healthPlanId` as bare lookup identifiers — see OQ-10 — but no other PHI field (name, DOB, address, phone, email, etc.) |
-| Compliance | Exactly one audit record per check, containing correlationId + timestamp + operation result + patientId + healthPlanId (intent.md Behavior; CLAUDE.md §4.1, as clarified by OQ-10); `/hipaa-check` must return COMPLIANT |
+| Security | No PHI in `ILogger` calls, error messages, or the audit record (CLAUDE.md §4.1). The audit record (a DB table, not a log) contains only `correlationId`, `status`, `checkedAt`, and `dataSource` — no `patientId`, `healthPlanId`, or PHI field of any kind (see OQ-10) |
+| Compliance | Exactly one audit record per check, containing correlationId + timestamp + operation result + dataSource, and nothing else (intent.md Behavior; CLAUDE.md §4.1, as finalized by OQ-10); `/hipaa-check` must return COMPLIANT |
 | Reliability | A missing member or health plan returns `status=ERROR` in a normal 200 response, not an HTTP 4xx/5xx — only genuine unhandled failures return HTTP 500 `SYS-001` |
 
 ---
@@ -209,4 +209,4 @@ All rows except `PT001240` already exist in `database/init.sql` seed data. `PT00
 | OQ-07 | intent.md doesn't specify UI placement or copy for the advisory result in wizard step 4. | NON-BLOCKING | A small inline badge/banner rendered next to the member `SearchSelect`, wired so it never affects `canProceed()`. | OPEN |
 | OQ-08 | intent.md's "within 500ms" (Success Criteria #2) doesn't state which percentile or measurement environment. | NON-BLOCKING | Interpreted as typical (not p99) latency against the local dev/test database, measured per-request in an automated test. | OPEN |
 | OQ-09 | FR-04 requires an `ERROR` result when both the member and health plan cannot be found, but section 4.4 didn't originally state which error code wins. | BLOCKING | **Decision (human, 2026-09-10):** member is checked first — if both are missing, treat it as member-missing and return `MBR-001`. Reflected in FR-04, §4.4, and AC-11. | RESOLVED |
-| OQ-10 | CLAUDE.md §4.1 lists `patientId` among the "NEVER log" PHI fields, and its "ALWAYS write" audit rule says the audit entry "must not contain any PHI field listed above" — which appeared to conflict with AC-08 requiring `patientId` in the audit record. | BLOCKING | **Decision (human, 2026-09-10):** `patientId` is not treated as PHI for the purpose of this audit table — it's a bare identifier, not name/DOB/address/etc., and is already stored elsewhere in the schema (e.g. `authorizations.patient_id`). The CLAUDE.md §4.1 "NEVER log" prohibition applies to `ILogger` calls, not to DB-stored identifiers. `patientId`/`healthPlanId` may appear in the eligibility audit table. Reflected in AC-08 and the NFR Security/Compliance rows. *Note: CLAUDE.md §4.1 itself remains ambiguous on this point for future specs — consider clarifying it there too.* | RESOLVED |
+| OQ-10 | CLAUDE.md §4.1 lists `patientId` among the "NEVER log" PHI fields, and its "ALWAYS write" audit rule says the audit entry "must not contain any PHI field listed above" — which appeared to conflict with AC-08 requiring `patientId` in the audit record. | BLOCKING | **Superseded decision (human, 2026-09-10, initial):** `patientId` is not PHI for audit-table purposes and may be stored there — reflected the earlier AC-08 wording. **Final decision (human, 2026-09-10):** design-note.md's build decision instead excludes `patientId`/`healthPlanId` from `EligibilityRecord` entirely (correlationId/status/checkedAt/dataSource only) — the simpler, narrower posture, and what was actually implemented (`Models/Entities.cs`, `Controllers/EligibilityController.cs`). spec.md's AC-08, FR-06, and the NFR Security/Compliance rows have been updated to match this final schema, not the earlier one. | RESOLVED |
